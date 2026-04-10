@@ -1,0 +1,49 @@
+package com.seuprojeto.demo.controller;
+
+import com.seuprojeto.demo.model.User;
+import com.seuprojeto.demo.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    private final UserService service;
+
+    public UserController(UserService service) {
+        this.service = service;
+    }
+
+    // 📌 Criar usuário
+    @PostMapping
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
+        return ResponseEntity.ok(service.createUser(user));
+    }
+
+    // 📌 Listar usuários
+    @GetMapping
+    public List<User> getAll() {
+        return service.getAllUsers();
+    }
+
+    // 📌 Buscar por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getById(@PathVariable Long id) {
+        User user = service.getUserById(id);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user);
+    }
+
+    // 📌 Deletar usuário
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        service.deleteUser(id);
+        return ResponseEntity.ok("Usuário deletado com sucesso!");
+    }
+}
